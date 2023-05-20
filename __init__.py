@@ -11,7 +11,7 @@ def chat():
         response = requests.post(
             'https://api.openai.com/v1/chat/completions',
             headers={
-                'Authorization': 'Bearer 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',
+                'Authorization': 'Bearer TOKEN',
                 'Content-Type': 'application/json'
             },
             json={
