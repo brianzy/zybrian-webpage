@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT Chat Interface</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .chat-container {
+      height: 400px;
+      overflow-y: scroll;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <h2 class="text-center">ChatGPT Chat Interface</h2>
+        <div class="chat-container" id="chat-container"></div>
+        <div class="input-group mt-3">
+          <input type="text" class="form-control" id="message-input" placeholder="Type your message...">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="button" onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    async function sendMessage() {
+      const messageInput = document.getElementById('message-input');
+      const message = messageInput.value.trim();
+
+      if (message !== '') {
+        addMessageToChat('user', message);
+
+        const response = await fetch('/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        const apiReply = data.reply;
+
+        addMessageToChat('api', apiReply);
+
+        messageInput.value = '';
+      }
+    }
+
+    function addMessageToChat(sender, message) {
+      const chatContainer = document.getElementById('chat-container');
+      const chatBubble = document.createElement('div');
+      chatBubble.classList.add('chat-bubble');
+
+      if (sender === 'user') {
+        chatBubble.classList.add('user-message');
+      } else if (sender === 'api') {
+        chatBubble.classList.add('api-message');
+      }
+
+      const chatMessage = document.createElement('span');
+      chatMessage.classList.add('chat-message');
+      chatMessage.innerText = message;
+
+      chatBubble.appendChild(chatMessage);
+      chatContainer.appendChild(chatBubble);
+
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  </script>
+</body>
+</html>
